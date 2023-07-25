@@ -1,4 +1,6 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.26)
+message("CMAKE_VERSION: ${CMAKE_VERSION}")
+message("=====================================")
 project(point_cloud_registration)
 
 find_package(catkin_simple REQUIRED)
@@ -10,6 +12,8 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
+find_package(Boost REQUIRED COMPONENTS thread)
+
 cs_add_library(${PROJECT_NAME}
   src/robust_pcl_registration/point_cloud_registration.cc
   src/robust_pcl_registration/pda.cc
@@ -19,19 +23,19 @@ cs_add_library(${PROJECT_NAME}
 
 # Pointcloud alignment using ICP.
 cs_add_executable(icp src/main_icp.cc)
-target_link_libraries(icp ${PROJECT_NAME})
+target_link_libraries(icp ${PROJECT_NAME} Boost::thread)
 
 # Pointcloud alignment using GICP.
 cs_add_executable(gicp src/main_gicp.cc)
-target_link_libraries(gicp ${PROJECT_NAME})
+target_link_libraries(gicp ${PROJECT_NAME} Boost::thread)
 
 # Pointcloud alignment using NDT.
 cs_add_executable(ndt src/main_ndt.cc)
-target_link_libraries(ndt ${PROJECT_NAME})
+target_link_libraries(ndt ${PROJECT_NAME} Boost::thread)
 
 # Pointcloud alignment using IPDA ("Robust ICP").
 cs_add_executable(ipda src/main_ipda.cc)
-target_link_libraries(ipda ${PROJECT_NAME})
+target_link_libraries(ipda ${PROJECT_NAME} Boost::thread)
 
 # Executable to convert pointcloud .xyz to .pcd format.
 cs_add_executable(xyz_to_pcd src/main_xyz_to_pcd.cc)
